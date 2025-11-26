@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione Open Day</title>
+    <style>
+        body { font-family: Arial; max-width: 500px; margin: 50px auto; padding: 20px; }
+        input, select { width: 100%; padding: 8px; margin: 5px 0 15px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .msg { padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h2>Registrazione Open Day</h2>
+    <form id="form">
+        <input type="text" name="cognome" placeholder="Cognome" required>
+        <input type="text" name="nome" placeholder="Nome" required>
+        <input type="text" name="scuola" placeholder="Scuola di provenienza" required>
+        <input type="date" name="data_nascita" required>
+        <select name="indirizzo" required>
+            <option value="">Seleziona indirizzo</option>
+            <option value="Informatica">Informatica</option>
+            <option value="Elettronica">Elettronica</option>
+            <option value="Meccanica">Meccanica</option>
+            <option value="Chimica">Chimica</option>
+        </select>
+        <button type="submit">Registra Presenza</button>
+    </form>
+    <div id="msg"></div>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const res = await fetch('salva.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                
+                document.getElementById('msg').innerHTML = 
+                    `<div class="${result.success ? 'success' : 'error'}">${result.message}</div>`;
+                
+                if(result.success) e.target.reset();
+            } catch(err) {
+                document.getElementById('msg').innerHTML = 
+                    '<div class="error">Errore di connessione</div>';
+            }
+        });
+    </script>
+</body>
+</html>

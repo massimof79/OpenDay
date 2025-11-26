@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS openday CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE openday;
+
+CREATE TABLE presenze (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cognome VARCHAR(100) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    scuola VARCHAR(200) NOT NULL,
+    data_nascita DATE NOT NULL,
+    indirizzo VARCHAR(100) NOT NULL,
+    data_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
