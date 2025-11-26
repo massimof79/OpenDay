@@ -33,27 +33,26 @@
     <div id="msg"></div>
 
     <script>
-        document.getElementById('form').addEventListener('submit', async (e) => {
+        document.getElementById('form').addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
             
-            try {
-                const res = await fetch('salva.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                
+            fetch('salva.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
                 document.getElementById('msg').innerHTML = 
                     `<div class="${result.success ? 'success' : 'error'}">${result.message}</div>`;
-                
                 if(result.success) e.target.reset();
-            } catch(err) {
+            })
+            .catch(err => {
                 document.getElementById('msg').innerHTML = 
                     '<div class="error">Errore di connessione</div>';
-            }
+            });
         });
     </script>
 </body>
