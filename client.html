@@ -35,15 +35,26 @@
     <script>
         document.getElementById('form').addEventListener('submit', (e) => {
             e.preventDefault();
+            //L'oggetto FormData può essere creato da un modulo HTML 
+            //esistente o costruito manualmente, aggiungendo coppie chiave-valore con il metodo append()
             const formData = new FormData(e.target);
+            //Trasforma una lista chiave - valore in un oggetto Javascript
             const data = Object.fromEntries(formData);
-            
+            //The fetch() function will reject the promise on some errors, 
+            //but not if the server responds with an error status like 404: so we also check the response status and throw if it is not OK.
             fetch('salva.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data)
             })
+                //res (Response)
+                //È l'oggetto Response grezzo restituito dal server. Contiene:
+                //Status code (200, 404, 500, ecc.)
+                //Headers (intestazioni HTTP)
+                //Body (il corpo della risposta, ancora NON processato)
             .then(res => res.json())
+                //result
+                //È il contenuto effettivo della risposta, già convertito da JSON a oggetto JavaScript.
             .then(result => {
                 document.getElementById('msg').innerHTML = 
                     `<div class="${result.success ? 'success' : 'error'}">${result.message}</div>`;
@@ -57,3 +68,20 @@
     </script>
 </body>
 </html>
+
+//result è contenuto dentro res, ma non è direttamente accessibile. Serve un passaggio per estrarlo.
+res = E' come n pacco postale chiuso 
+    Ha etichette (status, headers)
+    Contiene qualcosa dentro (body)
+
+res.json() = serve ad aprire il pacco e leggere il contenuto 
+result = Il contenuto effettivo del pacco (l'oggetto JavaScript)
+
+Perché non posso fare res.result?
+Perché il body in res è uno stream di dati grezzi. res.json():
+
+1.Legge lo stream
+2. Converte la stringa JSON in oggetto JavaScript
+3. Restituisce una Promise che si risolve con l'oggetto
+
+Ecco perché servono due .then() concatenati: uno per ricevere res, l'altro per aspettare che res.json() completi la conversione.
